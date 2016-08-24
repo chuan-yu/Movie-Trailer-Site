@@ -1,0 +1,329 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Fresh Tomatoes!</title>
+
+    <!-- Bootstrap 3 -->
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap-theme.min.css">
+    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+    <script src="https://netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
+    <style type="text/css" media="screen">
+        body {
+            padding-top: 80px;
+        }
+        h2 {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+        img {
+            border-radius: 10px;
+        }
+        #trailer .modal-dialog {
+            margin-top: 200px;
+            width: 640px;
+            height: 480px;
+        }
+        .hanging-close {
+            position: absolute;
+            top: -12px;
+            right: -12px;
+            z-index: 9001;
+        }
+        #trailer-video {
+            width: 100%;
+            height: 100%;
+        }
+        .navbar {
+            background: rgba(0, 0, 0, 0.2);
+            border: 0px;
+        }
+        .navbar .navbar-brand {
+            color: white;
+            font-weight: bold;
+            z-index: 50
+        }
+        .brochure {
+            background: url(brochure.jpg) no-repeat center center;
+            background-size: cover;
+            position: relative;
+            height: 400px;
+            width: 100%;
+            margin: 0;
+            top: -80px
+        }
+        .movie-tile {
+            margin-bottom: 20px;
+            padding-top: 20px;
+        }
+        .movie-tile:hover {
+            cursor: pointer;
+        }
+        .mvoie-tile:hover .movie-details {
+            display: block;
+        }
+        .movie-details-wrapper {
+            position: absolute;
+            left: 33px;
+            width: 220px;
+            height: 342px;
+            overflow: hidden;
+            padding: 15px;
+            vertical-align: top;
+            z-index: 10;
+            opacity: 0;
+            background: rgba(0,0,0,0.8);
+            -webkit-transition: opacity 1s ease;
+            -moz-transition: opacity 1s ease;
+            -o-transition: opacity 1s ease;
+            transition: opacity 1s ease;
+            color: white;
+            text-align: left;
+            border-radius: 10px;
+        }
+        .movie-details-wrapper:hover {
+            opacity: 0.8;
+        }
+        .story-line {
+            overflow: hidden;
+            line-height: 18px;
+            max-height: 144px;
+        }
+        .movie-title-wrapper {
+            position: relative;
+            top: -100px;
+            color: white;
+            width: 220px;
+            height: 80px;
+            margin-left: auto;
+            margin-right: auto;
+            border-radius: 0px 0px 10px 10px;
+            background: -moz-linear-gradient(top, rgba(76,76,76,0.1) 0%, rgba(89,89,89,0.16) 12%, rgba(102,102,102,0.23) 25%, rgba(71,71,71,0.3) 39%, rgba(44,44,44,0.35) 50%, rgba(17,17,17,0.4) 60%, rgba(43,43,43,0.48) 76%, rgba(28,28,28,0.55) 91%, rgba(19,19,19,0.6) 100%);
+            background: -webkit-linear-gradient(top, rgba(76,76,76,0.1) 0%,rgba(89,89,89,0.16) 12%,rgba(102,102,102,0.23) 25%,rgba(71,71,71,0.3) 39%,rgba(44,44,44,0.35) 50%,rgba(17,17,17,0.4) 60%,rgba(43,43,43,0.48) 76%,rgba(28,28,28,0.55) 91%,rgba(19,19,19,0.6) 100%);
+            background: linear-gradient(to bottom, rgba(76,76,76,0.1) 0%,rgba(89,89,89,0.16) 12%,rgba(102,102,102,0.23) 25%,rgba(71,71,71,0.3) 39%,rgba(44,44,44,0.35) 50%,rgba(17,17,17,0.4) 60%,rgba(43,43,43,0.48) 76%,rgba(28,28,28,0.55) 91%,rgba(19,19,19,0.6) 100%);
+            transition: opacity 1s ease;
+        }
+        .movie-tile:hover .movie-title-wrapper {
+            opacity: 0;
+        }
+        .movie-title {
+            overflow: hidden;
+            line-height: 20px;
+            max-height: 40px;
+        }
+        .tagline {
+            overflow: hidden;
+            line-height: 15px;
+            max-height: 30px;
+            padding: 0px 10px;
+        }
+        .scale-media {
+            padding-bottom: 56.25%;
+            position: relative;
+        }
+        .scale-media iframe {
+            border: none;
+            height: 100%;
+            position: absolute;
+            width: 100%;
+            left: 0;
+            top: 0;
+            background-color: white;
+        }
+    </style>
+    <script type="text/javascript" charset="utf-8">
+        // Pause the video when the modal is closed
+        $(document).on('click', '.hanging-close, .modal-backdrop, .modal', function (event) {
+            // Remove the src so the player itself gets removed, as this is the only
+            // reliable way to ensure the video stops playing in IE
+            $("#trailer-video-container").empty();
+        });
+        // Start playing the video whenever the trailer modal is opened
+        $(document).on('click', '.movie-tile', function (event) {
+            var trailerYouTubeId = $(this).attr('data-trailer-youtube-id')
+            var sourceUrl = 'http://www.youtube.com/embed/' + trailerYouTubeId + '?autoplay=1&html5=1';
+            $("#trailer-video-container").empty().append($("<iframe></iframe>", {
+              'id': 'trailer-video',
+              'type': 'text-html',
+              'src': sourceUrl,
+              'frameborder': 0
+            }));
+        });
+        // Animate in the movies when the page loads
+        $(document).ready(function () {
+          $('.movie-tile').hide().first().show("fast", function showNext() {
+            $(this).next("div").show("fast", showNext);
+          });
+        });
+    </script>
+</head>
+
+  <body>
+    <!-- Trailer Video Modal -->
+    <div class="modal" id="trailer">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <a href="#" class="hanging-close" data-dismiss="modal" aria-hidden="true">
+            <img src="https://lh5.ggpht.com/v4-628SilF0HtHuHdu5EzxD7WRqOrrTIDi_MhEG6_qkNtUK5Wg7KPkofp_VJoF7RS2LhxwEFCO1ICHZlc-o_=s0#w=24&h=24"/>
+          </a>
+          <div class="scale-media" id="trailer-video-container">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Page Content -->
+    <div class="container">
+      <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+          <div class="navbar-header">
+            <a class="navbar-brand" href="#">My Favourite Movies</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="container brochure">
+    </div>
+    <div class="container">
+      
+<div class="col-md-6 col-lg-3 movie-tile text-center" data-trailer-youtube-id="5MB3Ea6L-gw" data-toggle="modal" data-target="#trailer">
+    <div class="movie-details-wrapper">
+        <div class="movie-details">
+            <h2 class="movie-title">Avatar</h2>
+            <p class="release_date">Release Date: 2009-12-10</p>
+            <p class="language">Language: English</p>
+            <p class="review">Review: 7.1 / 10<p>
+            <p class="story-line">Story Line: In the 22nd century, a paraplegic Marine is dispatched to the moon Pandora on a unique mission, but becomes torn between following orders and protecting an alien civilization.</p>
+        </div>
+    </div>
+    <img src="https://image.tmdb.org/t/p/w396/tcqb9NHdw9SWs2a88KCDD4V8sVR.jpg" width="220" height="342">
+    <div class="movie-title-wrapper">
+        <h2 class="movie-title">Avatar</h2>
+        <p class="tagline">Enter the World of Pandora.</p>
+    </div>
+</div>
+
+<div class="col-md-6 col-lg-3 movie-tile text-center" data-trailer-youtube-id="K26_sDKnvMU" data-toggle="modal" data-target="#trailer">
+    <div class="movie-details-wrapper">
+        <div class="movie-details">
+            <h2 class="movie-title">Toy Story</h2>
+            <p class="release_date">Release Date: 1995-10-30</p>
+            <p class="language">Language: English</p>
+            <p class="review">Review: 7.5 / 10<p>
+            <p class="story-line">Story Line: Woody the cowboy is young Andy’s favorite toy. Yet this changes when Andy get the new super toy Buzz Lightyear for his birthday. Now that Woody is no longer number one he plans his revenge on Buzz. Toy Story is a milestone in film history for being the first feature film to use entirely computer animation.</p>
+        </div>
+    </div>
+    <img src="https://image.tmdb.org/t/p/w396/uMZqKhT4YA6mqo2yczoznv7IDmv.jpg" width="220" height="342">
+    <div class="movie-title-wrapper">
+        <h2 class="movie-title">Toy Story</h2>
+        <p class="tagline">The adventure takes off!</p>
+    </div>
+</div>
+
+<div class="col-md-6 col-lg-3 movie-tile text-center" data-trailer-youtube-id="l_ngIv5kFNY" data-toggle="modal" data-target="#trailer">
+    <div class="movie-details-wrapper">
+        <div class="movie-details">
+            <h2 class="movie-title">School of Rock</h2>
+            <p class="release_date">Release Date: 2003-10-03</p>
+            <p class="language">Language: English</p>
+            <p class="review">Review: 6.5 / 10<p>
+            <p class="story-line">Story Line: Fired from his band and hard up for cash, guitarist and vocalist Dewey Finn finagles his way into a job as a fourth-grade substitute teacher at a private school, where he secretly begins teaching his students the finer points of rock 'n' roll. The school's hard-nosed principal is rightly suspicious of Finn's activities. But Finn's roommate remains in the dark about what he's doing.</p>
+        </div>
+    </div>
+    <img src="https://image.tmdb.org/t/p/w396/cREN222Yw78zvSQ9bg17Y9QZS0c.jpg" width="220" height="342">
+    <div class="movie-title-wrapper">
+        <h2 class="movie-title">School of Rock</h2>
+        <p class="tagline">He just landed the gig of his life: 5th grade.</p>
+    </div>
+</div>
+
+<div class="col-md-6 col-lg-3 movie-tile text-center" data-trailer-youtube-id="2e-eXJ6HgkQ" data-toggle="modal" data-target="#trailer">
+    <div class="movie-details-wrapper">
+        <div class="movie-details">
+            <h2 class="movie-title">Titanic</h2>
+            <p class="release_date">Release Date: 1997-11-18</p>
+            <p class="language">Language: English</p>
+            <p class="review">Review: 7.2 / 10<p>
+            <p class="story-line">Story Line: 84 years later, a 101-year-old woman named Rose DeWitt Bukater tells the story to her granddaughter Lizzy Calvert, Brock Lovett, Lewis Bodine, Bobby Buell and Anatoly Mikailavich on the Keldysh about her life set in April 10th 1912, on a ship called Titanic when young Rose boards the departing ship with the upper-class passengers and her mother, Ruth DeWitt Bukater, and her fiancé, Caledon Hockley. Meanwhile, a drifter and artist named Jack Dawson and his best friend Fabrizio De Rossi win third-class tickets to the ship in a game. And she explains the whole story from departure until the death of Titanic on its first and last voyage April 15th, 1912 at 2:20 in the morning.</p>
+        </div>
+    </div>
+    <img src="https://image.tmdb.org/t/p/w396/kHXEpyfl6zqn8a6YuozZUujufXf.jpg" width="220" height="342">
+    <div class="movie-title-wrapper">
+        <h2 class="movie-title">Titanic</h2>
+        <p class="tagline">Nothing on Earth could come between them.</p>
+    </div>
+</div>
+
+<div class="col-md-6 col-lg-3 movie-tile text-center" data-trailer-youtube-id="p4mpOY0KWsM" data-toggle="modal" data-target="#trailer">
+    <div class="movie-details-wrapper">
+        <div class="movie-details">
+            <h2 class="movie-title">Harry Potter and the Prisoner of Azkaban</h2>
+            <p class="release_date">Release Date: 2004-06-03</p>
+            <p class="language">Language: English</p>
+            <p class="review">Review: 7.3 / 10<p>
+            <p class="story-line">Story Line: Harry, Ron and Hermione return to Hogwarts for a third adventure and magic filled year in this follow-up to the first two Potter blockbusters. Harry comes face to face with danger yet again, this time in the form of escaped convict Sirius Black. In a bid for help, Harry turns to sympathetic Professor Lupin -- but will it be enough?</p>
+        </div>
+    </div>
+    <img src="https://image.tmdb.org/t/p/w396/qMn0YCWKxt7xg8nqRnRj2Ei9qgx.jpg" width="220" height="342">
+    <div class="movie-title-wrapper">
+        <h2 class="movie-title">Harry Potter and the Prisoner of Azkaban</h2>
+        <p class="tagline">Something wicked this way comes.</p>
+    </div>
+</div>
+
+<div class="col-md-6 col-lg-3 movie-tile text-center" data-trailer-youtube-id="0KW8stZ2jSQ" data-toggle="modal" data-target="#trailer">
+    <div class="movie-details-wrapper">
+        <div class="movie-details">
+            <h2 class="movie-title">Spider-Man</h2>
+            <p class="release_date">Release Date: 2002-05-02</p>
+            <p class="language">Language: English</p>
+            <p class="review">Review: 6.5 / 10<p>
+            <p class="story-line">Story Line: After being bitten by a genetically altered spider, nerdy high school student Peter Parker is endowed with amazing powers.</p>
+        </div>
+    </div>
+    <img src="https://image.tmdb.org/t/p/w396/rZd0y1X1Gw4t5B3f01Qzj8DYY66.jpg" width="220" height="342">
+    <div class="movie-title-wrapper">
+        <h2 class="movie-title">Spider-Man</h2>
+        <p class="tagline">With great power comes great responsibility.</p>
+    </div>
+</div>
+
+<div class="col-md-6 col-lg-3 movie-tile text-center" data-trailer-youtube-id="8iHrEOiuoyw" data-toggle="modal" data-target="#trailer">
+    <div class="movie-details-wrapper">
+        <div class="movie-details">
+            <h2 class="movie-title">Pirates of the Caribbean: At World's End</h2>
+            <p class="release_date">Release Date: 2007-05-19</p>
+            <p class="language">Language: English</p>
+            <p class="review">Review: 6.7 / 10<p>
+            <p class="story-line">Story Line: Captain Barbossa, long believed to be dead, has come back to life and is headed to the edge of the Earth with brave Will Turner and feisty Elizabeth Swann. And what of Jack Sparrow? Nothing is as it seems.</p>
+        </div>
+    </div>
+    <img src="https://image.tmdb.org/t/p/w396/bXb00CkHqx7TPchTGG131sWV59y.jpg" width="220" height="342">
+    <div class="movie-title-wrapper">
+        <h2 class="movie-title">Pirates of the Caribbean: At World's End</h2>
+        <p class="tagline">At the end of the world, the adventure begins.</p>
+    </div>
+</div>
+
+<div class="col-md-6 col-lg-3 movie-tile text-center" data-trailer-youtube-id="KlyknsTJk0w" data-toggle="modal" data-target="#trailer">
+    <div class="movie-details-wrapper">
+        <div class="movie-details">
+            <h2 class="movie-title">Interstellar</h2>
+            <p class="release_date">Release Date: 2014-11-05</p>
+            <p class="language">Language: English</p>
+            <p class="review">Review: 8.2 / 10<p>
+            <p class="story-line">Story Line: Interstellar chronicles the adventures of a group of explorers who make use of a newly discovered wormhole to surpass the limitations on human space travel and conquer the vast distances involved in an interstellar voyage.</p>
+        </div>
+    </div>
+    <img src="https://image.tmdb.org/t/p/w396/nBNZadXqJSdt05SHLqgT0HuC5Gm.jpg" width="220" height="342">
+    <div class="movie-title-wrapper">
+        <h2 class="movie-title">Interstellar</h2>
+        <p class="tagline">Mankind was born on Earth. It was never meant to die here.</p>
+    </div>
+</div>
+
+    </div>
+  </body>
+</html>
